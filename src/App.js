@@ -1,8 +1,10 @@
 import React from 'react';
-import {Route, Switch, withRouter} from 'react-router-dom'
+import {Route, Switch, withRouter, Redirect} from 'react-router-dom'
 
 import Products from './Components/Products'
 import LogInForm from './Components/LogInForm'
+import RegisterForm from './Components/RegisterForm'
+import MySpace from './Components/MySpace'
 import './App.css';
 
 class App extends React.Component {
@@ -11,7 +13,8 @@ class App extends React.Component {
     products: [],
     user_id: '',
     first_name: '',
-    token: ''
+    token: '',
+    productsIbought: []
 
   }
 
@@ -22,6 +25,13 @@ class App extends React.Component {
     .then(productsArray => {
       this.setState({ products: productsArray })
     })
+
+    fetch('http://localhost:3000/orders')
+    .then(res => res.json())
+    .then(ordersArray => {
+      this.setState({ productsIbought: ordersArray })
+    })
+
 
     if(localStorage.token){
       fetch('http://localhost:3000/users/keep_logged_in', {
@@ -52,11 +62,44 @@ class App extends React.Component {
     .then(this.helpHandleLogInResponse)
   }
 
+  // REGISTER HANDLER 
+  handleRegisterSubmit = (userInfo) => {
+    console.log("Register form has been submitted!")
+    fetch('http://localhost:3000/users', {
+      method: "POST",
+      headers: {
+        'Content-Type': 'Application/json'
+      },
+      body: JSON.stringify({
+        first_name: userInfo.first_name,
+        last_name: userInfo.last_name,
+        password: userInfo.password,
+        phone: userInfo.phone, 
+        capital: 0,
+        address: userInfo.address
+      })
+    })
+    .then(res => res.json())
+    .then(res => {
+      if(res.error){
+        console.error(res.error)
+      } else {
+        localStorage.token = res.token
+        this.setState({
+          first_name: res.user.first_name,
+          user_id: res.user.id,
+          token: res.token
+        })
+      }
+    })
+  }
+
   // LOGOUT HANDLER 
 handleLogOut = () => {
   this.setState({
     id: 0,
-    first_name: ''
+    first_name: '',
+    productsIbought: []
   })
   localStorage.clear()
 }
@@ -70,8 +113,10 @@ helpHandleLogInResponse = (res) => {
     this.setState({
       user_id: res.user.id,
       first_name: res.user.first_name,
-      token: res.token
+      token: res.token,
+      productsIbought: res.user.productsIbought
     })
+    this.props.history.push('/myspace')
   }
 }
 
@@ -87,18 +132,47 @@ helpHandleLogInResponse = (res) => {
               formName="Login Form"
               handleSubmit={this.handleLoginSubmission}
             />
-      
-    }
-    //  else if (routerProps.location.pathname === "/register") {
-    //   return <RegisterForm
-    //           formName="Register Form"
-    //           handleRegisterSubmit={this.handleRegisterSubmit}
-    //         />
-    // } 
+     } else if (routerProps.location.pathname === "/register") {
+      return <RegisterForm
+              formName="Register Form"
+              handleRegisterSubmit={this.handleRegisterSubmit}
+            />
+    } 
   }
 
 
+  // UPDATE PRODUCTS 
+  addProduct = (product) => {
+    let copyOfProducts = [...this.state.products, product]
+    this.setState({
+      products: copyOfProducts
+    })
+  }
 
+  // UPDATE PRODUCTS I BOUGHT
+  addProductsIBoughtToMyList = (newProductIbought) => {
+    let copyOfProdutsIBought = [...this.state.productsIbought, newProductIbought]
+    this.setState({
+      productsIbought: copyOfProdutsIBought
+    })
+  }
+
+
+  // PROFILE - MY SPACE - COMPONENT
+
+  renderMySpace = (routerProps) => {
+    if (this.state.token) {
+      return <div>
+        <MySpace 
+        first_name = {this.state.first_name}
+        token = {this.state.token}
+        addProduct = {this.addProduct}
+        />
+      </div>
+    } else {
+      return <Redirect to='/login' />
+    }
+  }
 
 
 
@@ -109,16 +183,23 @@ helpHandleLogInResponse = (res) => {
 
   render() {
 
+    console.log(this.state.productsIbought)
+
 
     return (
       <div>
         <h1>Shopify Front End </h1>
         <Products
+        token = {this.state.token}
         products = {this.state.products}
+        current_userID = {this.state.user_id}
         />
         <main>
           <Switch>
             <Route path='/login' render= {this.renderForm} />
+            <Route path='/register' render={this.renderForm} />
+            <Route path='/myspace' render = {this.renderMySpace} />
+
           </Switch>
         </main>
 
