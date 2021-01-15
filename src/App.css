@@ -1,38 +1,71 @@
-.App {
-  text-align: center;
+/* Banner Component Style  */
+#header_ui {
+  margin-left: 2%;
+  margin-right: -1%;
+  box-shadow: none;
+  border: none;
+  padding-bottom: 0;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* HomePage COMPONENT STYLES */
+.hero-image {
+  background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(1, 0, 0, 0)), url("https://images.unsplash.com/photo-1522204523234-8729aa6e3d5f?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1350&q=80");
+  height: 600px;
+  background-position: center;
+  background-repeat: no-repeat; 
+  background-size: cover; 
+  position: relative;
+  opacity: .8;
+  
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+/* Product Component Style */
+
+.productHolder {
+  margin: 3% 2%;
+}
+
+.ui.card {
+  word-wrap: break-word;
+  /* height: 350px; */
+}
+
+.addToCart {
+  float: right;
+}
+
+.ui.card> .image> img {
+  width: 98%;
+  height: 220px;
+  margin: 1%;
+}
+.productsGrid {
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+  margin: 2% 1%;
+  overflow: hidden;
+}
+
+
+
+/* first break-point  */
+@media screen and (max-width: 1260px) {
+  .productsGrid {
+    grid-template-columns: 33.3% 33.3% 33.3% 
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* second break-point  */
+@media screen and (max-width: 950px) {
+  .productsGrid {
+    grid-template-columns: 50% 50%
   }
-  to {
-    transform: rotate(360deg);
+}
+
+/* Third break-point  */
+@media screen and (max-width: 655px) {
+  .productsGrid {
+    grid-template-columns: 100%;
+    margin: auto 12%;
   }
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import { withRouter } from 'react-router-dom'
+import {Button} from 'semantic-ui-react'
 
 class NewOrder extends React.Component {
 
@@ -27,8 +28,8 @@ class NewOrder extends React.Component {
     render () {
         return (
             <div>
-                <button
-                onClick = {() => this.handleClick(this.props.product)}>Buy from newOrder </button>
+                <Button color='green'
+                onClick = {() => this.handleClick(this.props.product)}>Add to Cart </Button>
             </div>
         )
     }

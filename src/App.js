@@ -1,10 +1,14 @@
 import React from 'react';
 import {Route, Switch, withRouter, Redirect} from 'react-router-dom'
 
+import HomePage from './Components/HomePage'
 import Products from './Components/Products'
 import LogInForm from './Components/LogInForm'
 import RegisterForm from './Components/RegisterForm'
 import MySpace from './Components/MySpace'
+import Banner from './Components/Banner'
+import 'semantic-ui-css/semantic.min.css'
+
 import './App.css';
 
 class App extends React.Component {
@@ -176,6 +180,15 @@ helpHandleLogInResponse = (res) => {
 
 
 
+  renderProducts = (routerProps) => {
+    return <div>
+      <Products
+        token = {this.state.token}
+        products = {this.state.products}
+        current_userID = {this.state.user_id}
+        />
+    </div>
+  }
 
 
 
@@ -188,17 +201,16 @@ helpHandleLogInResponse = (res) => {
 
     return (
       <div>
-        <h1>Shopify Front End </h1>
-        <Products
-        token = {this.state.token}
-        products = {this.state.products}
-        current_userID = {this.state.user_id}
-        />
+        <Banner token = {this.state.token}
+                name = {this.state.first_name} />
+        
         <main>
           <Switch>
-            <Route path='/login' render= {this.renderForm} />
-            <Route path='/register' render={this.renderForm} />
-            <Route path='/myspace' render = {this.renderMySpace} />
+            <Route path='/products' exact render = {this.renderProducts} />
+            <Route path='/' exact component ={HomePage} />
+            <Route path='/login' exact render= {this.renderForm} />
+            <Route path='/register' exact render={this.renderForm} />
+            <Route path='/myspace' exact render = {this.renderMySpace} />
 
           </Switch>
         </main>

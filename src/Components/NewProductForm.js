@@ -7,7 +7,8 @@ class NewProductForm extends Component {
     description: '',
     image: '',
     price: '',
-    category: ''
+    category: '',
+    selectedFile: ''
   }
 
   handleSubmit = (e) => {
@@ -34,6 +35,32 @@ class NewProductForm extends Component {
   })
 }
 
+  fileSelectedHandler = (e) => {
+    console.log(e.target.files[0])
+    this.setState({
+      selectedFile: e.target.files[0]
+    })
+  }
+
+  fileUploadHandler = () => {
+    const fd = new FormData()
+    fd.append('file', this.state.selectedFile, this.state.selectedFile.name)
+    fd.append('upload_preset', 'snapupy')
+    console.log(fd)
+    fetch('https://api.cloudinary.com/v1_1/personal-space/image/upload', {
+      method: "POST",
+      body: fd
+    })
+   .then(res => res.json())
+   .then(image_url => {
+     this.setState({
+       image: image_url.secure_url
+     })
+     console.log(image_url.secure_url)
+  })
+  }
+
+
   handleChange = (e) => {
     let {name, value} = e.target
     this.setState({
@@ -42,6 +69,8 @@ class NewProductForm extends Component {
   }
 
   render() {
+
+    console.log(this.state.selectedFile.name)
     let {name, description, image, price, category} = this.state
     return (
       <form onSubmit={this.handleSubmit}>
@@ -60,13 +89,18 @@ class NewProductForm extends Component {
             value={description}
             onChange={this.handleChange} 
           />
-        <label>image:</label>
-          <input type="text"
-            autoComplete="off"
+
+          <label>image:</label>
+          <img src={this.state.image} />
+          <input type="file"
             name="image"
-            value={image}
-            onChange={this.handleChange} 
-          />
+            placeholder = 'Upload an image'
+            onChange={e => {this.fileSelectedHandler(e); 
+              setTimeout( () =>this.fileUploadHandler(), 500)
+            }} 
+            />
+
+
         <label>Price:</label>
           <input type="number"
             autoComplete="off"
