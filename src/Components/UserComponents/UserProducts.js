@@ -1,5 +1,6 @@
 import React from 'react'
-import {Card, Image, Icon} from 'semantic-ui-react'
+import DeleteProduct from './DeleteProduct'
+import {Card, Image, Icon, Button} from 'semantic-ui-react'
 
 function UserProducts(props) {
     console.log(props.currentUserProducts.length)
@@ -16,7 +17,13 @@ function UserProducts(props) {
                         <Card.Description>{product.description}</Card.Description>
                         </Card.Content>
                         <Card.Content extra><Icon name='dollar'/>{product.price}.00
-                        <span className='addToCart'>Edit</span></Card.Content>
+                        </Card.Content>
+                        <Card.Content extra>
+                            <DeleteProduct 
+                            deleteProductFromState = {props.deleteProductFromState}
+                            product = {product}/>
+                        <Button color = 'yellow' >Edit</Button></Card.Content>
+                        
                     </Card>
                 </div>
     })

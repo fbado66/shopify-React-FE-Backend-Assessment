@@ -154,6 +154,14 @@ helpHandleLogInResponse = (res) => {
     })
   }
 
+  // UPDATE STATE WHEN DELETING A PRODUCT
+  deleteProductFromState = (deletedId) => {
+    let copyOfProducts = this.state.products.filter(productObj => {
+      return productObj.id !== deletedId
+    })
+    this.setState({ products: copyOfProducts})
+  }
+
   // UPDATE PRODUCTS I BOUGHT
   addProductsIBoughtToMyList = (newProductIbought) => {
     let copyOfProdutsIBought = [...this.state.productsIbought, newProductIbought]
@@ -201,6 +209,7 @@ helpHandleLogInResponse = (res) => {
     })
     return (
     <UserProducts 
+    deleteProductFromState = {this.deleteProductFromState}
     currentUserProducts = {currentUserProducts}/>
     )
   }
