@@ -28,38 +28,25 @@ class MySpace extends React.Component {
 
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
-    // PARTIAL RENDERS
-
+// PARTIAL RENDERS -------------------------------------------------------
     messages = () => {
         return <div>
-            {this.props.first_name}
+            <p>Welcome {this.props.first_name} this is your space at SnapUpy, in here you can have a general idea of how your products are doing in the market. 
+            You can add New products, check your inventory, much more.
+            </p>
         </div>
-    }
-
-
-    soldHistory = () => {
-        let soldProds = this.state.productsSold.map(prods => {
-            return <div key={prods.product.id + Math.random()}>
-                        <p>{prods.product.name}</p>
-                        <p> Sold to: {prods.buyer_name}</p>
-                    </div>
-        })
-        return ( <div>{soldProds}</div>)
     }
 
 
     myProducts = () => {
         let userProducts = this.props.userProducts.map(product => {
-            return <div key={product.id} id='listProductUser'>
-                        <List>
+            return <div key={product.id}>
+                        <List className ='productHolderOnList'>
                             <List.Item id='listProductUser'>
                                 <Image id='listImageUserProducts' avatar src={product.image} />
-                                <List.Content id='listProductUser'>
-                                    <List.Header >{product.name}</List.Header>
-                                    <List.Description> Category: {product.category} </List.Description>
+                                    <List.Header>{product.name}</List.Header>
                                     <List.Description> Price: $ {product.price}.00  </List.Description>
                                     <List.Description> Status: Active  </List.Description>
-                                </List.Content>
                             </List.Item>
                         </List>
                 </div>
@@ -67,14 +54,35 @@ class MySpace extends React.Component {
         return ( <div>{userProducts}</div> )
     }
 
-    
+    soldHistory = () => {
+        let soldProds = this.state.productsSold.map(prods => {
+            return <div key={prods.product.id + Math.random()}>
+                        <List className ='productHolderOnList'>
+                            <List.Item id='listProductUser'>
+                                <Image id='listImageUserProducts' avatar src={prods.product.image} />
+                                <List.Header>{prods.product.name}</List.Header>
+                                <List.Description> Price: $ {prods.product.price}.00  </List.Description>
+                                <List.Description> Sold to: {prods.buyer_name} </List.Description>                
+                            </List.Item>
+                        </List>
+                    </div>
+        })
+        return ( <div>{soldProds}</div>)
+    }
 
 
     purchaseHistory = () => {
         let purchaseProds = this.state.purchaseProducts.map(purchase => {
             return <div key={purchase.product.id}>
-                    <p>{purchase.product.name}</p>
-                </div>
+                        <List className ='productHolderOnList'>
+                            <List.Item id='listProductUser'>
+                                <Image id='listImageUserProducts' avatar src={purchase.product.image} />
+                                <List.Header>{purchase.product.name}</List.Header>
+                                <List.Description> Price: $ {purchase.product.price}.00  </List.Description>
+                                <List.Description> Purchased from: {purchase.product.user_name} </List.Description> 
+                                </List.Item>
+                        </List>               
+                    </div>
         })
         return ( <div>{purchaseProds}</div> )
     }

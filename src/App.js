@@ -10,6 +10,7 @@ import NewProductContainer from './Components/UserComponents/NewProductContainer
 import Banner from './Components/Banner'
 
 import 'semantic-ui-css/semantic.min.css'
+import {Button} from 'semantic-ui-react'
 
 import './App.css';
 import UserProducts from './Components/UserComponents/UserProducts';
@@ -22,7 +23,6 @@ class App extends React.Component {
     user_id: '',
     first_name: '',
     token: '',
-    productsIbought: [],
     newProductMessage: ''
   }
 
@@ -100,6 +100,7 @@ class App extends React.Component {
           user_id: res.user.id,
           token: res.token
         })
+        this.props.history.push('./myspace')
       }
     })
   }
@@ -107,9 +108,10 @@ class App extends React.Component {
   // LOGOUT HANDLER 
 handleLogOut = () => {
   this.setState({
-    id: 0,
+    user_id: 0,
     first_name: '',
-    productsIbought: []
+    token: '',
+    newProductMessage: ''
   })
   localStorage.clear()
 }
@@ -123,8 +125,8 @@ helpHandleLogInResponse = (res) => {
     this.setState({
       user_id: res.user.id,
       first_name: res.user.first_name,
-      token: res.token,
-      productsIbought: res.user.productsIbought
+      token: res.token
+      // productsIbought: res.user.productsIbought
     })
     this.props.history.push('/myspace')
   }
@@ -133,9 +135,9 @@ helpHandleLogInResponse = (res) => {
   // LOGIN / REGISTER FORM ------------------
   renderForm = (routerProps) => {
     if(this.state.token){
-      return <button onClick={this.handleLogOut}>
-      LOG OUT -> {this.state.first_name}?
-    </button>
+      return <Button id='logOutButton' inverted color='red' onClick={this.handleLogOut}>
+      Are you sure to log out {this.state.first_name}?
+    </Button>
     }
     if(routerProps.location.pathname === "/login"){
       return <LogInForm
