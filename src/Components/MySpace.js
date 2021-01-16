@@ -1,12 +1,13 @@
 import React from 'react'
-import {Button, Grid, Menu, Segment } from 'semantic-ui-react'
+import {Button, Grid, Menu, Segment, List, Icon, Image } from 'semantic-ui-react'
 import {Link} from 'react-router-dom'
 
 
 class MySpace extends React.Component {
     state = { 
         activeItem: 'Messages',
-        purchaseProducts: []
+        purchaseProducts: [],
+        productsSold: []
     }
 
     componentDidMount = () => {
@@ -15,7 +16,15 @@ class MySpace extends React.Component {
         .then(userInfo => {
             this.setState({purchaseProducts: userInfo.orders})
             })
+        
+        fetch(`http://localhost:3000/orders`)
+        .then(res => res.json())
+        .then(arrayOrders => {
+            this.setState({ productsSold: arrayOrders.filter(order => order.product.user_id === this.props.current_user) })
+        })
     }
+
+    
 
     handleItemClick = (e, { name }) => this.setState({ activeItem: name })
 
@@ -28,16 +37,37 @@ class MySpace extends React.Component {
     }
 
 
+    soldHistory = () => {
+        let soldProds = this.state.productsSold.map(prods => {
+            return <div key={prods.product.id + Math.random()}>
+                        <p>{prods.product.name}</p>
+                        <p> Sold to: {prods.buyer_name}</p>
+                    </div>
+        })
+        return ( <div>{soldProds}</div>)
+    }
+
+
     myProducts = () => {
         let userProducts = this.props.userProducts.map(product => {
-            return <div key={product.id}>
-                <p>{product.name}</p>
-            </div>
+            return <div key={product.id} id='listProductUser'>
+                        <List>
+                            <List.Item id='listProductUser'>
+                                <Image id='listImageUserProducts' avatar src={product.image} />
+                                <List.Content id='listProductUser'>
+                                    <List.Header >{product.name}</List.Header>
+                                    <List.Description> Category: {product.category} </List.Description>
+                                    <List.Description> Price: $ {product.price}.00  </List.Description>
+                                    <List.Description> Status: Active  </List.Description>
+                                </List.Content>
+                            </List.Item>
+                        </List>
+                </div>
         })
-        return (
-            <div>{userProducts}</div>
-        )
+        return ( <div>{userProducts}</div> )
     }
+
+    
 
 
     purchaseHistory = () => {
@@ -46,9 +76,7 @@ class MySpace extends React.Component {
                     <p>{purchase.product.name}</p>
                 </div>
         })
-        return (
-            <div>{purchaseProds}</div>
-            )
+        return ( <div>{purchaseProds}</div> )
     }
 
 
@@ -58,15 +86,26 @@ class MySpace extends React.Component {
         if(this.state.activeItem === 'Messages'){
             this.segmentDisplay = this.messages()
         } else if(this.state.activeItem === 'My Products'){
-            this.segmentDisplay = this.myProducts()
+            // setTimeout( () =>{this.segmentDisplay = ''}, 100)
+            this.segmentDisplay =  this.myProducts() 
+
+        } else if(this.state.activeItem === 'Sold Inventory'){
+            // setTimeout( () =>{this.segmentDisplay = ''}, 10)
+            this.segmentDisplay = this.soldHistory()
         } else if(this.state.activeItem === 'Purchase History'){
+            // setTimeout( () =>{this.segmentDisplay = ''}, 100)
             this.segmentDisplay = this.purchaseHistory()
-        } 
+        } else if(this.state.activeItem === 'Summary'){
+            this.segmentDisplay = 'Summary will go here'
+        }else {
+            this.segmentDisplay = "Messages"
+        }
     }
 
         
 
     render() {
+
 
         const { activeItem } = this.state
         // let {token, addProduct} = this.props
@@ -90,8 +129,8 @@ class MySpace extends React.Component {
                                 active={activeItem === 'My Products'}
                                 onClick={this.handleItemClick}/>
                             <Menu.Item
-                                name='Sold History'
-                                active={activeItem === 'Sold History'}
+                                name='Sold Inventory'
+                                active={activeItem === 'Sold Inventory'}
                                 onClick={this.handleItemClick}/>
                             <Menu.Item
                                 name='Purchase History'
@@ -103,7 +142,7 @@ class MySpace extends React.Component {
                                 onClick={this.handleItemClick}/>
                         </Menu>
                     </Grid.Column>
-                    <Grid.Column stretched width={12}>
+                    <Grid.Column stretched width={11}>
                         <Segment>
                             {this.segmentDisplay}
                         </Segment>

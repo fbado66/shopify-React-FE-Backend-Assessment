@@ -105,3 +105,15 @@
 #messages {
   border: 2px solid red 
 }
+
+
+#listImageUserProducts {
+  width: 100px;
+  height: 120px;
+}
+
+#listProductUser {
+  display: flex;
+  flex-wrap: nowrap
+/* justify-content: space-between; */
+}
