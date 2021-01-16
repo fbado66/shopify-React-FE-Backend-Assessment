@@ -99,3 +99,9 @@
     margin: auto 12%;
   }
 }
+
+
+
+#messages {
+  border: 2px solid red 
+}

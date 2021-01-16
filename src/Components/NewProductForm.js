@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {withRouter} from 'react-router-dom'
 import {Form, Button, Checkbox} from 'semantic-ui-react'
 class NewProductForm extends Component {
 
@@ -41,6 +42,8 @@ class NewProductForm extends Component {
     category: '',
     selectedFile: ''
   })
+  this.props.history.push('/myspace/products')
+
 }
 
   fileSelectedHandler = (e) => {
@@ -97,7 +100,7 @@ class NewProductForm extends Component {
           </Form.Field>
           <Form.Field>
             <label>Image</label>
-            <img id='imgProductOnForm' src={this.state.image ? this.state.image : './../img_placeholder.png'} />
+            <img id='imgProductOnForm' src={this.state.image ? this.state.image : './../../img_placeholder.png'} />
             <input type="file"
                     id='uploadButton'
                     name="image"
@@ -130,4 +133,4 @@ class NewProductForm extends Component {
   }
 }
 
-export default NewProductForm;
+export default withRouter(NewProductForm);

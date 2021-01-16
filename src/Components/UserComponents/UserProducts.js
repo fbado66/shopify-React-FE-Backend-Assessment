@@ -31,6 +31,7 @@ function UserProducts(props) {
     return(
         <div>
             <h1>My Products </h1>
+            <h1>{props.newProductMessage}</h1>
             <div className='productsGrid'>{UserProductsArray}</div>
         </div>
     )

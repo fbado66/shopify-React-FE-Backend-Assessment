@@ -6,11 +6,14 @@ import Products from './Components/Products'
 import LogInForm from './Components/LogInForm'
 import RegisterForm from './Components/RegisterForm'
 import MySpace from './Components/MySpace'
+import NewProductContainer from './Components/UserComponents/NewProductContainer'
 import Banner from './Components/Banner'
+
 import 'semantic-ui-css/semantic.min.css'
 
 import './App.css';
 import UserProducts from './Components/UserComponents/UserProducts';
+
 
 class App extends React.Component {
 
@@ -19,8 +22,8 @@ class App extends React.Component {
     user_id: '',
     first_name: '',
     token: '',
-    productsIbought: []
-
+    productsIbought: [],
+    newProductMessage: ''
   }
 
 
@@ -30,13 +33,6 @@ class App extends React.Component {
     .then(productsArray => {
       this.setState({ products: productsArray })
     })
-
-    fetch('http://localhost:3000/orders')
-    .then(res => res.json())
-    .then(ordersArray => {
-      this.setState({ productsIbought: ordersArray })
-    })
-
 
     if(localStorage.token){
       fetch('http://localhost:3000/users/keep_logged_in', {
@@ -48,8 +44,17 @@ class App extends React.Component {
       .then(res => res.json())
       .then(this.helpHandleLogInResponse)
     }
-  }
 
+    fetch(`http://localhost:3000/orders`)
+    .then(res => res.json())
+    .then(ordersArray =>{
+      this.setState({
+        productsIbought: ordersArray.filter(order =>order.product.user_id === this.state.user_id)
+      })
+    })
+
+
+  }
 
   // LOGIN HANDLER 
   handleLoginSubmission = (userInfo) => {
@@ -145,13 +150,21 @@ helpHandleLogInResponse = (res) => {
     } 
   }
 
-
   // UPDATE PRODUCTS 
   addProduct = (product) => {
     let copyOfProducts = [...this.state.products, product]
     this.setState({
-      products: copyOfProducts
+      products: copyOfProducts, 
+      newProductMessage: "You have created a new Product"
     })
+    this.resetNewProductMessage()
+  }
+
+  resetNewProductMessage = () => {
+    setTimeout( () =>this.setState({
+      newProductMessage: ''
+    }), 4000)
+
   }
 
   // UPDATE STATE WHEN DELETING A PRODUCT
@@ -170,16 +183,17 @@ helpHandleLogInResponse = (res) => {
     })
   }
 
-
   // PROFILE - MY SPACE - COMPONENT
-
   renderMySpace = (routerProps) => {
     if (this.state.token) {
       return <div>
         <MySpace 
         first_name = {this.state.first_name}
         token = {this.state.token}
-        addProduct = {this.addProduct}
+        current_user = {this.state.user_id}
+        addProduct = {this.addProduct} 
+        userProducts = {this.state.products.filter(product => product.user_id === this.state.user_id)}
+        productsIbought = {this.state.productsIbought} 
         />
       </div>
     } else {
@@ -187,6 +201,18 @@ helpHandleLogInResponse = (res) => {
     }
   }
 
+  createNewProduct = (routerProps) => {
+    if(this.state.token) {
+      return <div>
+        <NewProductContainer 
+        token = {this.state.token}
+        addProduct = {this.addProduct}
+        />
+      </div>
+    }else {
+      return <Redirect to='/login' />
+    }
+  }
 
 
   renderProducts = (routerProps) => {
@@ -199,7 +225,6 @@ helpHandleLogInResponse = (res) => {
     </div>
   }
 
-
   currentUserProducts = (routerProps) => {
     let currentUser = this.state.user_id
     let currentUserProducts = this.state.products.filter(product => {
@@ -208,16 +233,20 @@ helpHandleLogInResponse = (res) => {
       }
     })
     return (
+      <div>
     <UserProducts 
     deleteProductFromState = {this.deleteProductFromState}
-    currentUserProducts = {currentUserProducts}/>
+    currentUserProducts = {currentUserProducts}
+    newProductMessage = {this.state.newProductMessage}
+    />
+    </div>
     )
   }
 
-
-
   render() {
 
+    console.log(this.state.productsIbought)
+    console.log(this.state.products)
     return (
       <div>
         <Banner token = {this.state.token}
@@ -225,6 +254,7 @@ helpHandleLogInResponse = (res) => {
         
         <main>
           <Switch>
+            <Route path ='/myspace/products/new' exact render ={this.createNewProduct} />
             <Route path='/myspace/products' exact render= {this.currentUserProducts} />
             <Route path='/products' exact render = {this.renderProducts} />
             <Route path='/' exact component ={HomePage} />
