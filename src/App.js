@@ -10,6 +10,7 @@ import Banner from './Components/Banner'
 import 'semantic-ui-css/semantic.min.css'
 
 import './App.css';
+import UserProducts from './Components/UserComponents/UserProducts';
 
 class App extends React.Component {
 
@@ -191,13 +192,22 @@ helpHandleLogInResponse = (res) => {
   }
 
 
+  currentUserProducts = (routerProps) => {
+    let currentUser = this.state.user_id
+    let currentUserProducts = this.state.products.filter(product => {
+      if(product.user_id === currentUser){
+        return product
+      }
+    })
+    return (
+    <UserProducts 
+    currentUserProducts = {currentUserProducts}/>
+    )
+  }
 
 
 
   render() {
-
-    console.log(this.state.productsIbought)
-
 
     return (
       <div>
@@ -206,6 +216,7 @@ helpHandleLogInResponse = (res) => {
         
         <main>
           <Switch>
+            <Route path='/myspace/products' exact render= {this.currentUserProducts} />
             <Route path='/products' exact render = {this.renderProducts} />
             <Route path='/' exact component ={HomePage} />
             <Route path='/login' exact render= {this.renderForm} />

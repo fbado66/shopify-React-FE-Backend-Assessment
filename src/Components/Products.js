@@ -35,7 +35,7 @@ function Products(props) {
       <Card.Meta>
         <span className='capt'>{product.category}</span>
       </Card.Meta>
-      <Card.Description>{product.image}</Card.Description>
+      <Card.Description>{product.description}</Card.Description>
     </Card.Content>
     <Card.Content extra><Icon name='dollar'/>{product.price}.00
     <span className='addToCart'>{condition}</span></Card.Content>
