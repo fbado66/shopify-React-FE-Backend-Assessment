@@ -48,6 +48,36 @@
 
 
 
+/* NewProductForm Component Style */
+
+.ui.form {
+  max-width: 40%;
+  margin: 0 auto;
+}
+
+#uploadButton {
+  width: 200px;
+  margin: 0 auto;
+  display: block;
+  font-size: 14px;
+  border: none;
+}
+
+#imgProductOnForm {
+  width: 50%;
+  /* height: 450px; */
+  display: block;
+  margin: 0 auto;
+  border: 2px solid rgba(0, 0, 0, 0.084)
+}
+
+#buttonNewProduct {
+  display: block;
+  margin: 0 auto;
+}
+
+
+
 /* first break-point  */
 @media screen and (max-width: 1260px) {
   .productsGrid {

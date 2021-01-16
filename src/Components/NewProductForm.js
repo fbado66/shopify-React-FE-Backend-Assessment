@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import {Form, Button, Checkbox} from 'semantic-ui-react'
 class NewProductForm extends Component {
 
   state = {
@@ -33,6 +33,14 @@ class NewProductForm extends Component {
   .then(createdProduct => {
     this.props.addProduct(createdProduct)
   })
+  this.setState({
+    name: '',
+    description: '',
+    image: '',
+    price: '',
+    category: '',
+    selectedFile: ''
+  })
 }
 
   fileSelectedHandler = (e) => {
@@ -46,20 +54,17 @@ class NewProductForm extends Component {
     const fd = new FormData()
     fd.append('file', this.state.selectedFile, this.state.selectedFile.name)
     fd.append('upload_preset', 'snapupy')
-    console.log(fd)
-    fetch('https://api.cloudinary.com/v1_1/personal-space/image/upload', {
-      method: "POST",
-      body: fd
+      fetch('https://api.cloudinary.com/v1_1/personal-space/image/upload', {
+        method: "POST",
+        body: fd
+      })
+    .then(res => res.json())
+    .then(image_url => {
+      this.setState({
+        image: image_url.secure_url
+      })
     })
-   .then(res => res.json())
-   .then(image_url => {
-     this.setState({
-       image: image_url.secure_url
-     })
-     console.log(image_url.secure_url)
-  })
   }
-
 
   handleChange = (e) => {
     let {name, value} = e.target
@@ -70,56 +75,59 @@ class NewProductForm extends Component {
 
   render() {
 
-    console.log(this.state.selectedFile.name)
-    let {name, description, image, price, category} = this.state
+    let {name, description, price, category} = this.state
     return (
-      <form onSubmit={this.handleSubmit}>
-        <h1>New Product</h1>
-        <label>Name:</label>
-          <input type="text"
-            autoComplete="off"
-            name="name"
-            value={name}
-            onChange={this.handleChange} 
-          />
-        <label>Description:</label>
-          <input type="text"
-            autoComplete="off"
-            name="description"
-            value={description}
-            onChange={this.handleChange} 
-          />
-
-          <label>image:</label>
-          <img src={this.state.image} />
-          <input type="file"
-            name="image"
-            placeholder = 'Upload an image'
-            onChange={e => {this.fileSelectedHandler(e); 
-              setTimeout( () =>this.fileUploadHandler(), 500)
-            }} 
-            />
-
-
-        <label>Price:</label>
-          <input type="number"
-            autoComplete="off"
-            name="price"
-            value={price}
-            onChange={this.handleChange} 
-          />
-        <label>Category:</label>
-          <input type="text"
-            autoComplete="off"
-            name="category"
-            value={category}
-            onChange={this.handleChange} 
-          />
-        <input type="submit" value="New Product" />
-      </form>
+      <div>
+        <Form onSubmit={this.handleSubmit}>
+          <Form.Field>
+            <label>Name</label>
+            <input placeholder='Name'
+                    autoComplete="off"
+                    name ='name'
+                    value={name}
+                    onChange={this.handleChange} />
+          </Form.Field>
+          <Form.Field>
+            <label>Description</label>
+            <input placeholder='What is your product about?'
+                    autoComplete="off"
+                    name ='description'
+                    value={description}
+                    onChange={this.handleChange} />
+          </Form.Field>
+          <Form.Field>
+            <label>Image</label>
+            <img id='imgProductOnForm' src={this.state.image ? this.state.image : './../img_placeholder.png'} />
+            <input type="file"
+                    id='uploadButton'
+                    name="image"
+                    onChange={e => {this.fileSelectedHandler(e); 
+                      setTimeout( () =>this.fileUploadHandler(), 500)
+                    }} />
+          </Form.Field>
+          <Form.Field>
+            <label>Price</label>
+            <input placeholder='Price'
+                    type='number'
+                    autoComplete="off"
+                    name ='price'
+                    value= {price}
+                    onChange={this.handleChange} />
+          </Form.Field>
+          <Form.Field>
+            <label>Category</label>
+            <input placeholder='Choose'
+                    type='text'
+                    name ='category'
+                    value= {category}
+                    onChange={this.handleChange} />
+          </Form.Field>
+          <Button color='green' id='buttonNewProduct'
+           type='submit'>New Product</Button>
+        </Form>
+      </div>
     );
   }
-
 }
 
 export default NewProductForm;
