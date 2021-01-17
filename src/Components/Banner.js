@@ -7,7 +7,7 @@ function Banner(props) {
     let myAccount = 'Account'
 
     if (props.token){
-        logged = 'LOG OUT'
+        logged = 'Log Out'
         myAccount = `Hi ${props.name}!`
     }
 
@@ -36,33 +36,6 @@ function Banner(props) {
                         </Segment>
                    </div>
     } else {
-
-        // if (props.orderNumber.length === 0  ){
-        //     return <div >
-        //                 <Segment clearing id='header_ui'>
-        //                     <Header floated='right'>
-        //                         <Button basic color='red' animated as={Link} to={'/login'}>
-        //                             <Button.Content visible>{logged}</Button.Content>
-        //                             <Button.Content hidden><Icon name='arrow right' /></Button.Content>
-        //                         </Button>
-
-        //                         <Button basic color ='red' animated as={Link} to={'/profile'}>
-        //                             <Button.Content hidden>View Profile</Button.Content>
-        //                             <Button.Content visible>{profile}</Button.Content>
-        //                         </Button>
-
-        //                         <Button basic color='red' animated='vertical' as={Link} to={'/cart'}>
-        //                             <Button.Content hidden>My Cart</Button.Content>
-        //                             <Button.Content visible><Icon name='shop' /></Button.Content>
-        //                         </Button>  
-        //                     </Header>
-        //                     <Header floated='left'>
-        //                         <Label ribbon as={Link} to='/' id='logoIcon'>Foodies Road</Label>
-        //                     </Header>
-        //                 </Segment>
-        //             </div>
-        //     }else {
-
                 return(<Segment clearing id='header_ui'>
                             <Header floated='right'>
                                 <Button color='blue' animated as={Link} to={'/products'}>
@@ -78,11 +51,11 @@ function Banner(props) {
                                     <Button.Content hidden>Account</Button.Content>
                                     <Button.Content visible>{myAccount}</Button.Content>
                                 </Button>
+                                <Button color ='blue' animated as={Link} to={'./cart'}>
+                                <Button.Content visible>Cart</Button.Content>
+                                <Button.Content hidden><Icon name='arrow right' /></Button.Content>
+                                </Button>
 
-                                {/* <Button basic color='red' animated='vertical' as={Link} to={'/cart'}>
-                                    <Button.Content hidden>My Cart</Button.Content>
-                                    <Button.Content visible><span className='count'>{props.orderNumber.length} </span><Icon name='shop' /></Button.Content>
-                                </Button>   */}
                             </Header>
                             <Header floated='left'>
                                 <Label ribbon color='blue' size='big' as={Link} to='/' id='logoIcon'>SnapUpy</Label>

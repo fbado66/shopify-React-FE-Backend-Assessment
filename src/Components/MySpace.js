@@ -6,21 +6,20 @@ import {Link} from 'react-router-dom'
 class MySpace extends React.Component {
     state = { 
         activeItem: 'Messages',
-        purchaseProducts: [],
+        HoldAllOders: [],
         productsSold: []
     }
 
     componentDidMount = () => {
-        fetch(`http://localhost:3000/users/${this.props.current_user}`)
+        fetch(`https://snapupy-app-api.herokuapp.com/users/${this.props.current_user}`)
         .then(res => res.json())
         .then(userInfo => {
-            this.setState({purchaseProducts: userInfo.orders})
-            })
-        
-        fetch(`http://localhost:3000/orders`)
-        .then(res => res.json())
-        .then(arrayOrders => {
-            this.setState({ productsSold: arrayOrders.filter(order => order.product.user_id === this.props.current_user) })
+            console.log(userInfo)
+            // if(userInfo.carts.map(cart => cart.availability === 'onCart')){
+                this.setState({
+                    HoldAllOders: userInfo.carts.filter(cart => cart.bought === true),
+                    productsSold: userInfo.products.filter(product =>product.availability === 'onCart')
+                })
         })
     }
 
@@ -31,8 +30,8 @@ class MySpace extends React.Component {
 // PARTIAL RENDERS -------------------------------------------------------
     messages = () => {
         return <div>
-            <p>Welcome {this.props.first_name} this is your space at SnapUpy, in here you can have a general idea of how your products are doing in the market. 
-            You can add New products, check your inventory, much more.
+            <p className='message'>Welcome {this.props.first_name} this is your space at SnapUpy.<br/> In here you can have a general idea of how your products are doing in the market.<br/>
+            You can add New products, check your inventory, and much more.
             </p>
         </div>
     }
@@ -56,13 +55,13 @@ class MySpace extends React.Component {
 
     soldHistory = () => {
         let soldProds = this.state.productsSold.map(prods => {
-            return <div key={prods.product.id + Math.random()}>
+            return <div key={prods.id + Math.random()}>
                         <List className ='productHolderOnList'>
                             <List.Item id='listProductUser'>
-                                <Image id='listImageUserProducts' avatar src={prods.product.image} />
-                                <List.Header>{prods.product.name}</List.Header>
-                                <List.Description> Price: $ {prods.product.price}.00  </List.Description>
-                                <List.Description> Sold to: {prods.buyer_name} </List.Description>                
+                                <Image id='listImageUserProducts' avatar src={prods.image} />
+                                <List.Header>{prods.name}</List.Header>
+                                <List.Description> Price: $ {prods.price}.00  </List.Description>
+                                {/* <List.Description> Sold to: {prods.buyer_name} </List.Description>                 */}
                             </List.Item>
                         </List>
                     </div>
@@ -72,19 +71,25 @@ class MySpace extends React.Component {
 
 
     purchaseHistory = () => {
-        let purchaseProds = this.state.purchaseProducts.map(purchase => {
-            return <div key={purchase.product.id}>
-                        <List className ='productHolderOnList'>
+        let purchaseProducts = []
+        if((this.state.HoldAllOders.map(order => order.bought)).toString() === 'true'){
+            purchaseProducts = this.state.HoldAllOders.map(order => order.orders.map( order =>{
+                return <div key={order.id}>
+                    <List className ='productHolderOnList'>
                             <List.Item id='listProductUser'>
-                                <Image id='listImageUserProducts' avatar src={purchase.product.image} />
-                                <List.Header>{purchase.product.name}</List.Header>
-                                <List.Description> Price: $ {purchase.product.price}.00  </List.Description>
-                                <List.Description> Purchased from: {purchase.product.user_name} </List.Description> 
+                                <Image id='listImageUserProducts' avatar src={order.product.image} />
+                                <List.Header>{order.product.name}</List.Header>
+                                <List.Description> Price: $ {order.product.price}.00  </List.Description>
+                                <List.Description> Purchased from: {order.product.user_name} </List.Description> 
                                 </List.Item>
-                        </List>               
-                    </div>
-        })
-        return ( <div>{purchaseProds}</div> )
+                         </List>  
+                </div>
+            }))
+        } return (<div>{purchaseProducts}</div>)
+    }
+
+    summary = () => {
+        return <div>Work on this feature is set for next week</div>
     }
 
 
@@ -104,7 +109,7 @@ class MySpace extends React.Component {
             // setTimeout( () =>{this.segmentDisplay = ''}, 100)
             this.segmentDisplay = this.purchaseHistory()
         } else if(this.state.activeItem === 'Summary'){
-            this.segmentDisplay = 'Summary will go here'
+            this.segmentDisplay = this.summary()
         }else {
             this.segmentDisplay = "Messages"
         }
@@ -113,17 +118,17 @@ class MySpace extends React.Component {
         
 
     render() {
-
+        console.log(this.state.productsSold)
 
         const { activeItem } = this.state
-        // let {token, addProduct} = this.props
         return (
             <div>
                 {this.segmentToRender()}
-                <h1>Welcome to your space </h1>
-                <Button color='green' as={Link} to ='./myspace/products/new' >  New Product</Button>
-                <Button color='blue' as={Link} to='./myspace/products'>My Products</Button>
-                <p>Name {this.props.first_name}</p>
+                <h1 className='headerMySpace'>Welcome to your space {this.props.first_name}</h1>
+                    <div className='holdButtons'>
+                        <Button color='green' as={Link} to ='./myspace/products/new' >  New Product</Button> 
+                        <Button color='blue' as={Link} to='./myspace/products' id='products'>My Products</Button>
+                    </div>
 
                 <Grid>
                     <Grid.Column width={4}>

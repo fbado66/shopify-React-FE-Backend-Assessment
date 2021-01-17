@@ -4,8 +4,8 @@ import {Button} from 'semantic-ui-react'
 function DeleteProduct(props) {
 
     let handleClick = (product) => {
-        console.log(product.id)
-        fetch(`http://localhost:3000/products/${product.id}`, {
+        console.log(product)
+        fetch(`https://snapupy-app-api.herokuapp.com/products/${product.id}`, {
             method: 'DELETE'
         })
         .then(res => res.json())

@@ -20,7 +20,29 @@
   background-size: cover; 
   position: relative;
   opacity: .8;
-  
+}
+
+.heroParagraph {
+  text-align: center;
+  font-size: 30px;
+  text-shadow: #FAFAFA;
+}
+
+
+/* LogInForm Component Style  */
+.formName {
+  text-align: center
+}
+
+#logOutButton {
+  display: block;
+  margin: 5% auto;
+}
+
+#registerBUtton {
+  display: block;
+  width: 100px;
+  margin: 5% auto;
 }
 
 /* Product Component Style */
@@ -31,7 +53,6 @@
 
 .ui.card {
   word-wrap: break-word;
-  /* height: 350px; */
 }
 
 .addToCart {
@@ -123,8 +144,31 @@
 justify-content: space-between;
 }
 
+.headerMySpace {
+  text-align: center;
+  padding: 1% 5%;
+}
 
+.holdButtons {
+  margin:  2% 3%;
+}
+
+#products {
+  margin-left: 2%
+}
+
+.message {
+  line-height: 25px;
+}
+
+#purchaseButton {
+  margin-top: 5%;
+  float: right;
+  margin-right: 5%;
+}
 /* MySpace Component Style ------------------------------------------------
+
+
 PARTIAL RENDERS 
 My Products  */
 
@@ -134,12 +178,3 @@ My Products  */
   background: #FAFAFA;
   border-radius: 10px;
 }
-
-/* .producHolderOnList>.item .header { */
-  /* margin-left: 30%;
-
-}
-
-.productHolderOnList>.item .description {
-  margin-left: 10%;
-} */

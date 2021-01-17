@@ -7,7 +7,6 @@ function NewProductContainer(props) {
             <NewProductForm 
             token ={props.token}
             addProduct = {props.addProduct}/>
-            New Product goes here 
         </div>
     )
 }

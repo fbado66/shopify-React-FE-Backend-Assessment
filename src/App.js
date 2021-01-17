@@ -8,6 +8,7 @@ import RegisterForm from './Components/RegisterForm'
 import MySpace from './Components/MySpace'
 import NewProductContainer from './Components/UserComponents/NewProductContainer'
 import Banner from './Components/Banner'
+import Cart from './Components/Cart'
 
 import 'semantic-ui-css/semantic.min.css'
 import {Button} from 'semantic-ui-react'
@@ -23,19 +24,24 @@ class App extends React.Component {
     user_id: '',
     first_name: '',
     token: '',
-    newProductMessage: ''
+    newProductMessage: '',
+    tempCart: [],
+    productsIbought: [],
+    cart_id: '',
+    productsOnCart: [],
+    purchaseProducts: []
   }
 
 
   componentDidMount = () => {
-    fetch('http://localhost:3000/products')
+    fetch('https://snapupy-app-api.herokuapp.com/products')
     .then(res => res.json())
     .then(productsArray => {
       this.setState({ products: productsArray })
     })
 
     if(localStorage.token){
-      fetch('http://localhost:3000/users/keep_logged_in', {
+      fetch('https://snapupy-app-api.herokuapp.com/users/keep_logged_in', {
         method: 'GET',
         headers: {
           'Authorization': localStorage.token
@@ -45,20 +51,11 @@ class App extends React.Component {
       .then(this.helpHandleLogInResponse)
     }
 
-    fetch(`http://localhost:3000/orders`)
-    .then(res => res.json())
-    .then(ordersArray =>{
-      this.setState({
-        productsIbought: ordersArray.filter(order =>order.product.user_id === this.state.user_id)
-      })
-    })
-
-
   }
 
   // LOGIN HANDLER 
   handleLoginSubmission = (userInfo) => {
-    fetch("http://localhost:3000/users/login", {
+    fetch("https://snapupy-app-api.herokuapp.com/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "Application/json"
@@ -75,7 +72,7 @@ class App extends React.Component {
   // REGISTER HANDLER 
   handleRegisterSubmit = (userInfo) => {
     console.log("Register form has been submitted!")
-    fetch('http://localhost:3000/users', {
+    fetch('https://snapupy-app-api.herokuapp.com/users', {
       method: "POST",
       headers: {
         'Content-Type': 'Application/json'
@@ -86,7 +83,8 @@ class App extends React.Component {
         password: userInfo.password,
         phone: userInfo.phone, 
         capital: 0,
-        address: userInfo.address
+        address: userInfo.address,
+        token: userInfo.token
       })
     })
     .then(res => res.json())
@@ -100,6 +98,23 @@ class App extends React.Component {
           user_id: res.user.id,
           token: res.token
         })
+
+        fetch('https://snapupy-app-api.herokuapp.com/carts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'Application/json',
+        "authorization": this.state.token
+      },
+      body: JSON.stringify({
+        bought: false
+      })
+    })
+    .then(res => res.json())
+    .then(cartPojo => {
+      this.setState({
+        cart_id: cartPojo.id
+      })
+    })
         this.props.history.push('./myspace')
       }
     })
@@ -111,7 +126,8 @@ handleLogOut = () => {
     user_id: 0,
     first_name: '',
     token: '',
-    newProductMessage: ''
+    newProductMessage: '',
+    cart_id: ''
   })
   localStorage.clear()
 }
@@ -121,12 +137,14 @@ helpHandleLogInResponse = (res) => {
   if(res.error) {
     console.error(res.error)
   } else {
+    console.log(res)
     localStorage.token = res.token
     this.setState({
       user_id: res.user.id,
       first_name: res.user.first_name,
-      token: res.token
-      // productsIbought: res.user.productsIbought
+      token: res.token,
+      productsIbought: res.user.productsIbought,
+      cart_id: (res.user.carts.map(cart => cart.id).toString())
     })
     this.props.history.push('/myspace')
   }
@@ -150,6 +168,38 @@ helpHandleLogInResponse = (res) => {
               handleRegisterSubmit={this.handleRegisterSubmit}
             />
     } 
+  }
+
+  updateCartId = (newCartId) => {
+    this.setState({
+      cart_id: newCartId
+    })
+
+  }
+
+
+
+  // UPDATE PRODUCTS ON CARD
+
+  updateProductsOnCart = (newProduct) => {
+    let copyofProductsOnCart = [...this.state.productsOnCart, newProduct]
+    this.setState({
+      productsOnCart: copyofProductsOnCart
+    })
+  }
+  // ADD ORDER TO TEMP-CART
+  ordersToCart = () =>{
+    return <Cart 
+    current_user = {this.state.user_id}
+    token = {this.state.token}    
+    cart_id = {parseInt(this.state.cart_id)}
+    updateCartId = {this.updateCartId}
+    productsOnCart = {this.state.productsOnCart}
+    purchaseProducts = {this.purchaseProduts}
+    userProducts = {this.state.products.filter(product => product.user_id === this.state.user_id)}
+
+
+    />
   }
 
   // UPDATE PRODUCTS 
@@ -185,6 +235,15 @@ helpHandleLogInResponse = (res) => {
     })
   }
 
+  // UPDATE PURCHASE PRODUCTS
+  purchaseProduts = (product) => {
+    let copyOfPurchaseProducts = [...this.state.purchaseProducts, product]
+    this.setState({
+      purchaseProducts: copyOfPurchaseProducts
+    })
+
+  }
+
   // PROFILE - MY SPACE - COMPONENT
   renderMySpace = (routerProps) => {
     if (this.state.token) {
@@ -196,6 +255,7 @@ helpHandleLogInResponse = (res) => {
         addProduct = {this.addProduct} 
         userProducts = {this.state.products.filter(product => product.user_id === this.state.user_id)}
         productsIbought = {this.state.productsIbought} 
+        cart_id = {parseInt(this.state.cart_id)}
         />
       </div>
     } else {
@@ -223,6 +283,9 @@ helpHandleLogInResponse = (res) => {
         token = {this.state.token}
         products = {this.state.products}
         current_userID = {this.state.user_id}
+        tempCart = {this.addOrderToTempCart}
+        cart_id = {parseInt(this.state.cart_id)}
+        updateProductsOnCart = {this.updateProductsOnCart}
         />
     </div>
   }
@@ -247,8 +310,8 @@ helpHandleLogInResponse = (res) => {
 
   render() {
 
-    console.log(this.state.productsIbought)
-    console.log(this.state.products)
+    console.log(this.state.purchaseProducts)
+    
     return (
       <div>
         <Banner token = {this.state.token}
@@ -256,6 +319,7 @@ helpHandleLogInResponse = (res) => {
         
         <main>
           <Switch>
+            <Route path='/cart' exact render = {this.ordersToCart} />
             <Route path ='/myspace/products/new' exact render ={this.createNewProduct} />
             <Route path='/myspace/products' exact render= {this.currentUserProducts} />
             <Route path='/products' exact render = {this.renderProducts} />

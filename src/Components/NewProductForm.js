@@ -16,7 +16,7 @@ class NewProductForm extends Component {
     e.preventDefault()
     console.log(this.props.tiken, this.state.name)
   
-  fetch('http://localhost:3000/products', {
+  fetch('https://snapupy-app-api.herokuapp.com/products', {
     method: "POST",
     headers: {
       "Content-type": "Application/json",
