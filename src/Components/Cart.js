@@ -115,7 +115,7 @@ class Cart extends Component {
                 return <div key={purchase.product.id}>
                         <List className ='productHolderOnList'>
                             <List.Item id='listProductUser'>
-                                <Image id='listImageUserProducts' avatar src={purchase.product.image} />
+                                <Image id='listImageUserProducts' avatar src={purchase.product.image} alt={purchase.product.name} />
                                 <List.Header>{purchase.product.name}</List.Header>
                                 <List.Description> Price: $ {purchase.product.price}.00  </List.Description>
                                 <List.Description> Seller: {purchase.product.user_name} </List.Description> 

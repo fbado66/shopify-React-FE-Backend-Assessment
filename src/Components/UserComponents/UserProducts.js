@@ -9,7 +9,7 @@ function UserProducts(props) {
         if(product.availability === null) {
         return <div key = {product.id} className='productHolder'>
                     <Card>
-                        <Image src={product.image} wrapped ui={false} />
+                        <Image src={product.image} wrapped ui={false} alt={product.name} />
                         <Card.Content>
                         <Card.Header>{product.name}</Card.Header>
                         <Card.Meta>
@@ -30,7 +30,7 @@ function UserProducts(props) {
         } else if(product.availability === 'onCart'){
             return <div key = {product.id} className='productHolder'>
                     <Card>
-                        <Image src={product.image} wrapped ui={false} />
+                        <Image src={product.image} wrapped ui={false} alt={product.name}/>
                         <Card.Content>
                         <Card.Header>{product.name}</Card.Header>
                         <Card.Meta>

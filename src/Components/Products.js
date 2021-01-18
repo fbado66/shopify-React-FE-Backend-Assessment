@@ -23,7 +23,7 @@ function Products(props) {
     
         return <div key = {product.id} className='productHolder'>
                     <Card>
-                        <Image src={product.image} wrapped ui={false} />
+                        <Image src={product.image} wrapped ui={false} alt={product.name}/>
                         <Card.Content>
                         <Card.Header>{product.name}</Card.Header>
                         <Card.Meta>
